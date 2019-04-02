@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "873363676703",
+    "firebase_url": "https://reutbuyitforme2019.firebaseio.com",
+    "project_id": "reutbuyitforme2019",
+    "storage_bucket": "reutbuyitforme2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873363676703:android:33f999bfac45924b",
+        "android_client_info": {
+          "package_name": "com.reuttomer.reut_buy_it_for_me"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873363676703-vvtcprops9lb5ebruil0vvf2478atj4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAeT2qzUNT-82MWeC6bmA1T51Som7Fsbs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
