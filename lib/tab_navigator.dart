@@ -26,7 +26,7 @@ class TabNavigator extends StatelessWidget {
   Map<String, WidgetBuilder> _routeBuilders(BuildContext context,
       {int materialIndex: 500}) {
     return {
-      TabNavigatorRoutes.root: (context) => TabWebView(title: TabHelper.description(tabItem), 
+      TabNavigatorRoutes.root: (context) => TabWebView(title: "רעות תקני לי",
       url: TabHelper.url(tabItem))
       // TabNavigatorRoutes.root: (context) => ColorsListPage(
             // color: TabHelper.color(tabItem),

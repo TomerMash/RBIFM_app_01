@@ -53,8 +53,20 @@ class TabHelper {
     return '';
   }
 
-  static IconData icon(TabItem tabItem) {
-    return Icons.layers;
+  static AssetImage icon(TabItem tabItem) {
+    switch (tabItem) {
+      case TabItem.home:
+        return new AssetImage("assets/icon_cart.png");
+      case TabItem.favorites:
+        return new AssetImage("assets/icon_specials.png");
+      case TabItem.buyMe:
+        return new AssetImage("assets/icon_cart.png");
+      case TabItem.meetUs:
+        return new AssetImage("assets/icon_meet_us.png");
+      case TabItem.calculator:
+        return new AssetImage("assets/icon_cart.png");
+    }
+    return null;
   }
 
 static MaterialColor color(TabItem tabItem) {
@@ -98,12 +110,12 @@ class BottomNavigation extends StatelessWidget {
 
   BottomNavigationBarItem _buildItem({TabItem tabItem}) {
     String text = TabHelper.description(tabItem);
-    IconData icon = TabHelper.icon(tabItem);
+    AssetImage icon = TabHelper.icon(tabItem);
     return BottomNavigationBarItem(
-      icon: Icon(
-        icon,
-        color: _colorTabMatching(item: tabItem),
-      ),
+      icon: new ImageIcon(icon, color: _colorTabMatching(item: tabItem)),//Icon(
+//        icon,
+//        color: _colorTabMatching(item: tabItem),
+//      ),
       title: Text(
         text,
         style: TextStyle(
