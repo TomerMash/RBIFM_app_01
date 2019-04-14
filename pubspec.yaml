@@ -52,6 +52,7 @@ flutter:
     - assets/icon_meet_us.png
     - assets/icon_specials.png
     - assets/popup_background.png
+    - assets/close_popup_button.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

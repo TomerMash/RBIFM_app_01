@@ -30,7 +30,7 @@ class AppState extends State<App> {
     if (Platform.isIOS) _iosPermission();
 
     _firebaseMessaging.getToken().then((token){
-      print(token);
+      print('token: $token');
     });
 
     _firebaseMessaging.configure(

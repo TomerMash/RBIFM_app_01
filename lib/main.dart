@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/app.dart';
+import 'AppColors.dart';
 
 void main() => runApp(new MyApp());
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Reut By It For My',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: AppColors.pink,
       ),
       home: new App(),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/bottom_navigation.dart';
 import 'package:reut_buy_it_for_me/tab_webview.dart';
+import 'push_popup.dart';
 
 class TabNavigatorRoutes {
   static const String root = '/';
@@ -26,10 +27,12 @@ class TabNavigator extends StatelessWidget {
   Map<String, WidgetBuilder> _routeBuilders(BuildContext context,
       {int materialIndex: 500}) {
     return {
-      TabNavigatorRoutes.root: (context) => TabWebView(title: "רעות תקני לי",
-      url: TabHelper.url(tabItem))
+      TabNavigatorRoutes.root: (context) => RTWebView("רעות תקני לי",
+          TabHelper.url(tabItem)), //TabWebView(title: "רעות תקני לי",
+      // url: TabHelper.url(tabItem)
+      // ),
       // TabNavigatorRoutes.root: (context) => ColorsListPage(
-            // color: TabHelper.color(tabItem),
+      // color: TabHelper.color(tabItem),
       //       title: TabHelper.description(tabItem),
       //       onPush: (materialIndex) =>
       //           _push(context, materialIndex: materialIndex),
@@ -39,6 +42,7 @@ class TabNavigator extends StatelessWidget {
       //       title: TabHelper.description(tabItem),
       //       materialIndex: materialIndex,
       //     ),
+      TabNavigatorRoutes.detail: (context) => PushPopup()
     };
   }
 
