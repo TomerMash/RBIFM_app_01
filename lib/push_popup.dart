@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reut_buy_it_for_me/utils/assets.dart';
 
 class PushPopup extends StatelessWidget {
   @override
@@ -6,7 +7,7 @@ class PushPopup extends StatelessWidget {
     return new Container( 
       decoration: new BoxDecoration(
         image: new DecorationImage(
-          image: new AssetImage("assets/popup_background.png"),
+          image: new AssetImage(Assets.popupBackground),
           fit: BoxFit.fitWidth,
         ),
       ),
@@ -18,14 +19,22 @@ class PushPopup extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.fromLTRB(16, 36, 0, 16),
               child : new FlatButton(
-                child: new Image.asset("assets/close_popup_button.png"),
+                child: new Image.asset(Assets.closePopupButton),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
             )
           ),
-          Text('tesc')
+          SizedBox(
+                  child: Image(
+                    image: AssetImage(Assets.popupLogo),
+                    fit: BoxFit.fitHeight,
+                  ),
+                  height: 70,
+                  width: 152,
+                ),
+          Text('Some text')
         ],
       ),
     );

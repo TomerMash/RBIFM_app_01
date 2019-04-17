@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
+import './utils/assets.dart';
 
 enum TabItem { home, favorites, buyMe, meetUs, calculator }
 
@@ -56,15 +57,15 @@ class TabHelper {
   static AssetImage icon(TabItem tabItem) {
     switch (tabItem) {
       case TabItem.home:
-        return new AssetImage("assets/icon_cart.png");
+        return new AssetImage(Assets.iconHome);
       case TabItem.favorites:
-        return new AssetImage("assets/icon_specials.png");
+        return new AssetImage(Assets.iconSpecials);
       case TabItem.buyMe:
-        return new AssetImage("assets/icon_cart.png");
+        return new AssetImage(Assets.iconCart);
       case TabItem.meetUs:
-        return new AssetImage("assets/icon_meet_us.png");
+        return new AssetImage(Assets.iconMeetUs);
       case TabItem.calculator:
-        return new AssetImage("assets/icon_cart.png");
+        return new AssetImage(Assets.iconCalculator);
     }
     return null;
   }
