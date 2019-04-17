@@ -71,7 +71,7 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
                 children: <Widget>[
                   new Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new DotsIndicator(
+                    child: isDone? new Container() : new DotsIndicator(
                       controller: _controller,
                       itemCount: _pages.length,
                       onPageSelected: (int page) {
@@ -86,7 +86,7 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      new Container(
+                      isDone? new Container() : new Container(
                         width: 130.0,
                         height: 42.0,
                         decoration: BoxDecoration(

@@ -40,7 +40,6 @@ class AppState extends State<App> {
         ConnectionStatusSingleton.getInstance();
     _connectionChangeStream =
         connectionStatus.connectionChange.listen(connectionChanged);
-    //connectionStatus.checkConnection(); // At the initial load
     connectionStatus.isConnectedToInternet().then((isConnected) {
       if (!isConnected) {
         _showAlert(context);
@@ -125,10 +124,17 @@ class AppState extends State<App> {
       return new App();
     }
     // _saveWelcomeShowed();
-    Navigator.of(context).push(MaterialPageRoute(
+    final result = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
-    // Navigator.push(
-    // context, MaterialPageRoute(builder: (context) => OnboardingMainPage()));
+    if (result == "favorite") {
+      setState(() {
+        currentTab = TabItem.favorites;
+      });
+    } else if (result == "calculator") {
+      setState(() {
+        currentTab = TabItem.calculator;
+      });
+    }
   }
 
   _saveWelcomeShowed() async {
