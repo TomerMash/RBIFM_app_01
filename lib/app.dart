@@ -4,6 +4,10 @@ import 'package:reut_buy_it_for_me/tab_navigator.dart';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'push_popup.dart';
+import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'utils/connectionStatusSingleton.dart';
+import 'dart:async';
 
 class App extends StatefulWidget {
   @override
@@ -11,6 +15,8 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
+  StreamSubscription _connectionChangeStream;
+  bool isOffline = false;
   TabItem currentTab = TabItem.home;
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.home: GlobalKey<NavigatorState>(),
@@ -25,11 +31,56 @@ class AppState extends State<App> {
   void initState() {
     super.initState();
     _firebaseCloudMessagingListeners();
+    _shouldShowWelcome();
+    _initConnectionListener();
   }
+
+  void _initConnectionListener() {
+    ConnectionStatusSingleton connectionStatus =
+        ConnectionStatusSingleton.getInstance();
+    _connectionChangeStream =
+        connectionStatus.connectionChange.listen(connectionChanged);
+    //connectionStatus.checkConnection(); // At the initial load
+    connectionStatus.isConnectedToInternet().then((isConnected) {
+      if (!isConnected) {
+        _showAlert(context);
+      }
+    });
+  }
+
+  void connectionChanged(dynamic hasConnection) {
+    setState(() {
+      isOffline = !hasConnection;
+    });
+
+    if (isOffline) {
+      _showAlert(context);
+    }
+  }
+
+  void _showAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Info"),
+              content: Text(
+                  "Internet not available, Please check your internet connectivity and try again"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                new FlatButton(
+                  child: new Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
   void _firebaseCloudMessagingListeners() {
     if (Platform.isIOS) _iosPermission();
 
-    _firebaseMessaging.getToken().then((token){
+    _firebaseMessaging.getToken().then((token) {
       print('token: $token');
     });
 
@@ -53,19 +104,44 @@ class AppState extends State<App> {
 
   void _iosPermission() {
     _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true)
-    );
+        IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings)
-    {
+        .listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
     });
   }
-  
+
   void _selectTab(TabItem tabItem) {
     setState(() {
       currentTab = tabItem;
     });
+  }
+
+  _shouldShowWelcome() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final key = 'welcome';
+    final value = prefs.getInt(key) ?? 0;
+    if (value == 1) {
+      return new App();
+    }
+    // _saveWelcomeShowed();
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
+    // Navigator.push(
+    // context, MaterialPageRoute(builder: (context) => OnboardingMainPage()));
+  }
+
+  _saveWelcomeShowed() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final key = 'welcome';
+    final value = 1;
+    prefs.setInt(key, value);
+    print('saved $value');
+  }
+
+  Future navigateToSubPage(context) async {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PushPopup()));
   }
 
   @override
