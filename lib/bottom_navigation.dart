@@ -4,7 +4,6 @@ import './utils/assets.dart';
 
 enum TabItem { home, favorites, buyMe, meetUs, calculator }
 
-
 class TabHelper {
   static TabItem item({int index}) {
     switch (index) {
@@ -70,7 +69,7 @@ class TabHelper {
     return null;
   }
 
-static MaterialColor color(TabItem tabItem) {
+  static MaterialColor color(TabItem tabItem) {
     // switch (tabItem) {
     //   case TabItem.home:
     //     return AppColors.pink;
@@ -88,32 +87,36 @@ static MaterialColor color(TabItem tabItem) {
 }
 
 class BottomNavigation extends StatelessWidget {
-  BottomNavigation({this.currentTab, this.onSelectTab});
+  BottomNavigation({this.currentTab, this.onSelectTab, this.onTabIndex});
   final TabItem currentTab;
   final ValueChanged<TabItem> onSelectTab;
+  final ValueChanged<int> onTabIndex;
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      items: [
-        _buildItem(tabItem: TabItem.home),
-        _buildItem(tabItem: TabItem.favorites),
-        _buildItem(tabItem: TabItem.buyMe),
-        _buildItem(tabItem: TabItem.meetUs),
-        _buildItem(tabItem: TabItem.calculator),
-      ],
-      onTap: (index) => onSelectTab(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          _buildItem(tabItem: TabItem.home),
+          _buildItem(tabItem: TabItem.favorites),
+          _buildItem(tabItem: TabItem.buyMe),
+          _buildItem(tabItem: TabItem.meetUs),
+          _buildItem(tabItem: TabItem.calculator),
+        ],
+        onTap: (index) {
+          onSelectTab(
             TabHelper.item(index: index),
-          ),
-    );
+          );
+          onTabIndex(index);
+        });
   }
 
   BottomNavigationBarItem _buildItem({TabItem tabItem}) {
     String text = TabHelper.description(tabItem);
     AssetImage icon = TabHelper.icon(tabItem);
     return BottomNavigationBarItem(
-      icon: new ImageIcon(icon, color: _colorTabMatching(item: tabItem)),//Icon(
+      icon:
+          new ImageIcon(icon, color: _colorTabMatching(item: tabItem)), //Icon(
 //        icon,
 //        color: _colorTabMatching(item: tabItem),
 //      ),

@@ -18,6 +18,7 @@ class AppState extends State<App> {
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
   TabItem currentTab = TabItem.home;
+  int _currentIndex = 0;
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.home: GlobalKey<NavigatorState>(),
     TabItem.favorites: GlobalKey<NavigatorState>(),
@@ -31,8 +32,8 @@ class AppState extends State<App> {
   void initState() {
     super.initState();
     _firebaseCloudMessagingListeners();
-    _shouldShowWelcome();
     _initConnectionListener();
+    _shouldShowWelcome();
   }
 
   void _initConnectionListener() {
@@ -51,7 +52,7 @@ class AppState extends State<App> {
     setState(() {
       isOffline = !hasConnection;
     });
-
+    print(isOffline);
     if (isOffline) {
       _showAlert(context);
     }
@@ -116,6 +117,12 @@ class AppState extends State<App> {
     });
   }
 
+  void _selectedIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   _shouldShowWelcome() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final key = 'welcome';
@@ -123,7 +130,7 @@ class AppState extends State<App> {
     if (value == 1) {
       return new App();
     }
-    // _saveWelcomeShowed();
+    _saveWelcomeShowed();
     final result = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
@@ -166,6 +173,7 @@ class AppState extends State<App> {
         bottomNavigationBar: BottomNavigation(
           currentTab: currentTab,
           onSelectTab: _selectTab,
+          onTabIndex: _selectedIndex,
         ),
       ),
     );
