@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/bottom_navigation.dart';
 import 'package:reut_buy_it_for_me/tab_webview.dart';
-import 'push_popup.dart';
-import 'webview_test.dart';
+import 'onboarding/onboarding_controller.dart';
 class TabNavigatorRoutes {
   static const String root = '/';
   static const String detail = '/detail';
@@ -13,7 +12,7 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final TabItem tabItem;
 
-  void _push(BuildContext context, {int materialIndex: 500}) {
+  void pushToDetail(BuildContext context, {int materialIndex: 500}) {
     var routeBuilders = _routeBuilders(context, materialIndex: materialIndex);
 
     Navigator.push(
@@ -69,7 +68,7 @@ class TabNavigator extends StatelessWidget {
       //       title: TabHelper.description(tabItem),
       //       materialIndex: materialIndex,
       //     ),
-      TabNavigatorRoutes.detail: (context) => TabWebView(title: 't',url: TabHelper.url(tabItem))
+      TabNavigatorRoutes.detail: (context) => OnboardingMainPage()
     };
   }
 

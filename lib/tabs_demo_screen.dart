@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reut_buy_it_for_me/bottom_navigation.dart';
-import 'package:reut_buy_it_for_me/tab_navigator.dart';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'push_popup.dart';
@@ -9,27 +7,43 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/connectionStatusSingleton.dart';
 import 'dart:async';
 import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
+import 'bottom_navigation.dart';
+import 'tab_screen.dart';
+import 'tab_home.dart';
+import 'tab_meetus.dart';
+import 'tab_calculator.dart';
+import 'tab_buy_it_for_me.dart';
+import 'tab_favorite.dart';
+import 'tab_webview.dart';
 
-class App extends StatefulWidget {
+class TabsDemoScreen extends StatefulWidget {
+  TabsDemoScreen() : super();
+
   @override
-  State<StatefulWidget> createState() => AppState();
+  _TabsDemoScreenState createState() => _TabsDemoScreenState();
 }
 
-class AppState extends State<App> {
+class _TabsDemoScreenState extends State<TabsDemoScreen> {
+  static final String title = "רעות תקני לי";
+  int currentTabIndex = 0;
+  List<Widget> tabs = [
+    TabHome(title, TabHelper.url(TabItem.home)),
+    TabFavorite(title, TabHelper.url(TabItem.favorites)),
+    TabBuyItForMe(title, TabHelper.url(TabItem.buyMe)),
+    TabMeetUs(title, TabHelper.url(TabItem.meetUs)),
+    TabCalculator(title, TabHelper.url(TabItem.calculator))
+  ];
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
-  TabItem currentTab = TabItem.home;
-  int _currentIndex = 0;
-  Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
-    TabItem.home: GlobalKey<NavigatorState>(),
-    TabItem.favorites: GlobalKey<NavigatorState>(),
-    TabItem.buyMe: GlobalKey<NavigatorState>(),
-    TabItem.meetUs: GlobalKey<NavigatorState>(),
-    TabItem.calculator: GlobalKey<NavigatorState>(),
-  };
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-  @override
+  onTapped(int index) {
+    setState(() {
+      currentTabIndex = index;
+    });
+  }
+
+@override
   void initState() {
     super.initState();
     _firebaseCloudMessagingListeners();
@@ -88,21 +102,18 @@ class AppState extends State<App> {
     _firebaseMessaging.configure(
       // When you get a notification and your app is active, then you just want to receive the message. For this the onMessage: will be the entry point into your application.
       onMessage: (Map<String, dynamic> message) async {
-        NotificationObject notification = new NotificationObject.fromJson(message);
         print('on message $message');
-        presentPushNotification(context, notification);
+        presentPushNotification(context, message);
       },
       // When your app is in the background and you get a notification your app will be brought to the front and the onResume: will be the entry point into your application
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
-        NotificationObject notification = new NotificationObject.fromJson(message);
-        presentPushNotification(context, notification);
+        presentPushNotification(context, message);
       },
       // When your app is not active and you get a notification
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
-        NotificationObject notification = new NotificationObject.fromJson(message);
-        presentPushNotification(context, notification);
+        presentPushNotification(context, message);
       },
     );
   }
@@ -113,18 +124,6 @@ class AppState extends State<App> {
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
-    });
-  }
-
-  void _selectTab(TabItem tabItem) {
-    setState(() {
-      currentTab = tabItem;
-    });
-  }
-
-  void _selectedIndex(int index) {
-    setState(() {
-      _currentIndex = index;
     });
   }
 
@@ -140,11 +139,11 @@ class AppState extends State<App> {
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
       setState(() {
-        currentTab = TabItem.favorites;
+        currentTabIndex = 1;
       });
     } else if (result == "calculator") {
       setState(() {
-        currentTab = TabItem.calculator;
+        currentTabIndex = 4;
       });
     }
   }
@@ -157,44 +156,64 @@ class AppState extends State<App> {
     print('saved $value');
   }
 
-  Future presentPushNotification(context, NotificationObject message) async {
-    // Navigator.push(
-    //     context, MaterialPageRoute(builder: (context) => PushPopup()));
-    Navigator.of(context).push(MaterialPageRoute(
-        fullscreenDialog: true, builder: (context) => PushPopup(message)));
+  Future presentPushNotification(context, Map<String, dynamic> message) async {
+    print("Message: $message");
+    NotificationObject notification = new NotificationObject.fromJson(message);//
+    if (Platform.isIOS) {
+      String title = message["apn"]["alert"]["title"];  
+      print("Title: $title");
+    }
+    
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PushPopup(notification)));
+    // Navigator.of(context).push(MaterialPageRoute(
+    //     fullscreenDialog: true, builder: (context) => PushPopup(message)));
     // navigatorKeys[currentTab].currentState.push(MaterialPageRoute(
     //     fullscreenDialog: true, builder: (context) => PushPopup(message)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async =>
-          !await navigatorKeys[currentTab].currentState.maybePop(),
-      child: Scaffold(
-        body: Stack(children: <Widget>[
-          _buildOffstageNavigator(TabItem.home),
-          _buildOffstageNavigator(TabItem.favorites),
-          _buildOffstageNavigator(TabItem.buyMe),
-          _buildOffstageNavigator(TabItem.meetUs),
-          _buildOffstageNavigator(TabItem.calculator),
-        ]),
-        bottomNavigationBar: BottomNavigation(
-          currentTab: currentTab,
-          onSelectTab: _selectTab,
-          onTabIndex: _selectedIndex,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        
+      ),
+      body: tabs[currentTabIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: onTapped,
+        currentIndex: currentTabIndex,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          _buildItem(tabItem: TabItem.home),
+          _buildItem(tabItem: TabItem.favorites),
+          _buildItem(tabItem: TabItem.buyMe),
+          _buildItem(tabItem: TabItem.meetUs),
+          _buildItem(tabItem: TabItem.calculator)
+        ],
+      ),
+    );
+  }
+
+  BottomNavigationBarItem _buildItem({TabItem tabItem}) {
+    String text = TabHelper.description(tabItem);
+    AssetImage icon = TabHelper.icon(tabItem);
+    return BottomNavigationBarItem(
+      icon:
+          new ImageIcon(icon, color: _colorTabMatching(item: tabItem)), //Icon(
+//        icon,
+//        color: _colorTabMatching(item: tabItem),
+//      ),
+      title: Text(
+        text,
+        style: TextStyle(
+          color: _colorTabMatching(item: tabItem),
         ),
       ),
     );
   }
 
-  Widget _buildOffstageNavigator(TabItem tabItem) {
-    return Offstage(
-      offstage: currentTab != tabItem,
-      child: TabNavigator(
-        navigatorKey: navigatorKeys[tabItem],
-        tabItem: tabItem,
-      ),
-    );
+  Color _colorTabMatching({TabItem item}) {
+    return currentTabIndex == item.index ? TabHelper.color(item) : Colors.grey;
   }
 }

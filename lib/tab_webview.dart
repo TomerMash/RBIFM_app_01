@@ -116,7 +116,9 @@ class _WebViewState extends State<RTWebView> {
     _onUrlChanged = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       if (mounted) {
         setState(() {
-          flutterWebviewPlugin.hide();
+          if (_url != url) {
+            flutterWebviewPlugin.hide();
+          }
           _history.add('onUrlChanged: $url');
         });
       }
@@ -159,12 +161,7 @@ class _WebViewState extends State<RTWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            _title,
-          ),
-          backgroundColor: AppColors.pink,
-        ),
+        
         body: Container(
           color: Colors.white,
           child: _buildWebView(),

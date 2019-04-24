@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/utils/assets.dart';
+import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
 
 class PushPopup extends StatelessWidget {
+  PushPopup(this.message);
+  final NotificationObject message;
+
   @override
   Widget build(BuildContext context) {
     return new Container( 
@@ -34,7 +38,7 @@ class PushPopup extends StatelessWidget {
                   height: 70,
                   width: 152,
                 ),
-          Text('Some text')
+          Text(message.notification.title)
         ],
       ),
     );
