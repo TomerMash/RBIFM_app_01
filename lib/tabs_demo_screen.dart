@@ -15,6 +15,7 @@ import 'tab_calculator.dart';
 import 'tab_buy_it_for_me.dart';
 import 'tab_favorite.dart';
 import 'tab_webview.dart';
+import 'webview_test.dart';
 
 class TabsDemoScreen extends StatefulWidget {
   TabsDemoScreen() : super();
@@ -27,8 +28,8 @@ class _TabsDemoScreenState extends State<TabsDemoScreen> {
   static final String title = "רעות תקני לי";
   int currentTabIndex = 0;
   List<Widget> tabs = [
-    TabHome(title, TabHelper.url(TabItem.home)),
-    TabFavorite(title, TabHelper.url(TabItem.favorites)),
+    InnerWebview(url: TabHelper.url(TabItem.home)),
+    InnerWebview(url: TabHelper.url(TabItem.favorites)),
     TabBuyItForMe(title, TabHelper.url(TabItem.buyMe)),
     TabMeetUs(title, TabHelper.url(TabItem.meetUs)),
     TabCalculator(title, TabHelper.url(TabItem.calculator))
