@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'AppColors.dart';
+import './utils/AppColors.dart';
 import './utils/assets.dart';
 
 enum TabItem { home, favorites, buyMe, meetUs, calculator }

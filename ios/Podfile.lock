@@ -46,7 +46,7 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 5.3)
     - Protobuf (~> 3.1)
   - Flutter (1.0.0)
-  - flutter_webview_plugin (0.0.1):
+  - flutter_inappbrowser (0.0.1):
     - Flutter
   - GoogleAppMeasurement (5.8.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
@@ -87,8 +87,8 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
-  - Flutter (from `.symlinks/flutter/ios-release`)
-  - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
+  - Flutter (from `.symlinks/flutter/ios`)
+  - flutter_inappbrowser (from `.symlinks/plugins/flutter_inappbrowser/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
@@ -115,9 +115,9 @@ EXTERNAL SOURCES:
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
-  flutter_webview_plugin:
-    :path: ".symlinks/plugins/flutter_webview_plugin/ios"
+    :path: ".symlinks/flutter/ios"
+  flutter_inappbrowser:
+    :path: ".symlinks/plugins/flutter_inappbrowser/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
 
@@ -133,7 +133,7 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: cf488df2f4b79782f0e430b04a0e17c0aa7979b2
   FirebaseMessaging: 2d53d08d752fbe63ce0820428d70be5ab87c11fb
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
+  flutter_inappbrowser: 93214ba3c0bc9db42e879f808d993b6d3be32379
   GoogleAppMeasurement: 1624046ab1bcc5e170061a56ef5679000b079c8e
   GoogleUtilities: 6481e6318c5fcabaaa8513ef8120f329055d7c10
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
@@ -141,6 +141,6 @@ SPEC CHECKSUMS:
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
 
-PODFILE CHECKSUM: aff02bfeed411c636180d6812254b2daeea14d09
+PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
 
 COCOAPODS: 1.7.0.beta.2

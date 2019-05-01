@@ -53,8 +53,8 @@ class TabNavigator extends StatelessWidget {
     //     };
     // }
     return {
-      TabNavigatorRoutes.root: (context) => RTWebView("רעות תקני לי",
-          TabHelper.url(tabItem)), //TabWebView(title: "רעות תקני לי",
+      // TabNavigatorRoutes.root: (context) => RTWebView("רעות תקני לי",
+      //     TabHelper.url(tabItem)), //TabWebView(title: "רעות תקני לי",
       // url: TabHelper.url(tabItem)
       // ),
       // TabNavigatorRoutes.root: (context) => ColorsListPage(

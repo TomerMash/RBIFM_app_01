@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/app.dart';
-import 'AppColors.dart';
+import 'pages/main_app.dart';
+import './utils/AppColors.dart';
 import 'utils/connectionStatusSingleton.dart';
 import 'package:reut_buy_it_for_me/tabs_demo_screen.dart';
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: AppColors.pink,
       ),
-      home: new TabsDemoScreen(),
+      home: new MainApp(),
     );
   }
 }

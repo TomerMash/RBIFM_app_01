@@ -1,48 +1,41 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'push_popup.dart';
+import '../push_popup.dart';
 import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'utils/connectionStatusSingleton.dart';
+import '../utils/connectionStatusSingleton.dart';
 import 'dart:async';
 import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
-import 'bottom_navigation.dart';
-import 'webview_test.dart';
+import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
+import 'package:reut_buy_it_for_me/bottom_navigation.dart';
+import '../utils/AppColors.dart';
 
-class TabsDemoScreen extends StatefulWidget {
-  TabsDemoScreen() : super();
-
+class MainApp extends StatefulWidget {
   @override
-  _TabsDemoScreenState createState() => _TabsDemoScreenState();
+  State<StatefulWidget> createState() => AppState();
 }
 
-class _TabsDemoScreenState extends State<TabsDemoScreen> {
-  static final String title = "רעות תקני לי";
-  int currentTabIndex = 0;
-  List<Widget> tabs = [
-    // InnerWebview(url: TabHelper.url(TabItem.home)),
-    // InnerWebview(url: TabHelper.url(TabItem.favorites)),
-    // TabBuyItForMe(title, TabHelper.url(TabItem.buyMe)),
-    // TabMeetUs(title, TabHelper.url(TabItem.meetUs)),
-    // TabCalculator(title, TabHelper.url(TabItem.calculator))
-  ];
+class AppState extends State<MainApp> {
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
+  InAppWebViewController webView;
+  String url = TabHelper.url(TabItem.home);
+  double progress = 0;
+
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-  onTapped(int index) {
-    setState(() {
-      currentTabIndex = index;
-    });
-  }
-
-@override
+  @override
   void initState() {
     super.initState();
     _firebaseCloudMessagingListeners();
     _initConnectionListener();
     _shouldShowWelcome();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _initConnectionListener() {
@@ -96,18 +89,24 @@ class _TabsDemoScreenState extends State<TabsDemoScreen> {
     _firebaseMessaging.configure(
       // When you get a notification and your app is active, then you just want to receive the message. For this the onMessage: will be the entry point into your application.
       onMessage: (Map<String, dynamic> message) async {
+        NotificationObject notification =
+            new NotificationObject.fromJson(message);
         print('on message $message');
-        presentPushNotification(context, message);
+        presentPushNotification(context, notification);
       },
       // When your app is in the background and you get a notification your app will be brought to the front and the onResume: will be the entry point into your application
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
-        presentPushNotification(context, message);
+        NotificationObject notification =
+            new NotificationObject.fromJson(message);
+        presentPushNotification(context, notification);
       },
       // When your app is not active and you get a notification
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
-        presentPushNotification(context, message);
+        NotificationObject notification =
+            new NotificationObject.fromJson(message);
+        presentPushNotification(context, notification);
       },
     );
   }
@@ -133,11 +132,11 @@ class _TabsDemoScreenState extends State<TabsDemoScreen> {
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
       setState(() {
-        currentTabIndex = 1;
+        // currentTab = TabItem.favorites;
       });
     } else if (result == "calculator") {
       setState(() {
-        currentTabIndex = 4;
+        // currentTab = TabItem.calculator;
       });
     }
   }
@@ -150,64 +149,91 @@ class _TabsDemoScreenState extends State<TabsDemoScreen> {
     print('saved $value');
   }
 
-  Future presentPushNotification(context, Map<String, dynamic> message) async {
-    print("Message: $message");
-    NotificationObject notification = new NotificationObject.fromJson(message);//
-    if (Platform.isIOS) {
-      String title = message["apn"]["alert"]["title"];  
-      print("Title: $title");
-    }
-    
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PushPopup(notification)));
-    // Navigator.of(context).push(MaterialPageRoute(
-    //     fullscreenDialog: true, builder: (context) => PushPopup(message)));
+  Future presentPushNotification(context, NotificationObject message) async {
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => PushPopup()));
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true, builder: (context) => PushPopup(message)));
     // navigatorKeys[currentTab].currentState.push(MaterialPageRoute(
     //     fullscreenDialog: true, builder: (context) => PushPopup(message)));
+  }
+
+  Widget _getBody() {
+    return InAppWebView(
+      initialUrl: url,
+      initialHeaders: {},
+      initialOptions: {},
+      onWebViewCreated: (InAppWebViewController controller) {
+        webView = controller;
+      },
+      onLoadStart: (InAppWebViewController controller, String url) {
+        print("started $url");
+        setState(() {
+          this.url = url;
+        });
+      },
+      onProgressChanged: (InAppWebViewController controller, int progress) {
+        setState(() {
+          this.progress = progress / 100;
+        });
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        
-      ),
-      body: tabs[currentTabIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTapped,
-        currentIndex: currentTabIndex,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          _buildItem(tabItem: TabItem.home),
-          _buildItem(tabItem: TabItem.favorites),
-          _buildItem(tabItem: TabItem.buyMe),
-          _buildItem(tabItem: TabItem.meetUs),
-          _buildItem(tabItem: TabItem.calculator)
-        ],
-      ),
-    );
-  }
-
-  BottomNavigationBarItem _buildItem({TabItem tabItem}) {
-    String text = TabHelper.description(tabItem);
-    AssetImage icon = TabHelper.icon(tabItem);
-    return BottomNavigationBarItem(
-      icon:
-          new ImageIcon(icon, color: _colorTabMatching(item: tabItem)), //Icon(
-//        icon,
-//        color: _colorTabMatching(item: tabItem),
-//      ),
-      title: Text(
-        text,
-        style: TextStyle(
-          color: _colorTabMatching(item: tabItem),
+        endDrawer: Theme(
+          data: Theme.of(context).copyWith(canvasColor: AppColors.cream),
+          child: Drawer(
+            child: Column(
+              children: <Widget>[
+                AppBar(
+                  automaticallyImplyLeading: false,
+                  title: Text('Choose'),
+                ),
+                ListTile(
+                  title: Text(TabHelper.description(TabItem.home)),
+                  onTap: () {
+                    url = TabHelper.url(TabItem.home);
+                    webView.loadUrl(url);
+                  },
+                ),
+                ListTile(
+                  title: Text(TabHelper.description(TabItem.favorites)),
+                  onTap: () {
+                    url = TabHelper.url(TabItem.favorites);
+                    webView.loadUrl(url);
+                  },
+                ),
+                ListTile(
+                  title: Text(TabHelper.description(TabItem.buyMe)),
+                  onTap: () {
+                    url = TabHelper.url(TabItem.buyMe);
+                    webView.loadUrl(url);
+                  },
+                ),
+                ListTile(
+                  title: Text(TabHelper.description(TabItem.meetUs)),
+                  onTap: () {
+                    url = TabHelper.url(TabItem.meetUs);
+                    webView.loadUrl(url);
+                  },
+                ),
+                ListTile(
+                  title: Text(TabHelper.description(TabItem.calculator)),
+                  onTap: () {
+                    url = TabHelper.url(TabItem.calculator);
+                    webView.loadUrl(url);
+                  },
+                )
+              ],
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  Color _colorTabMatching({TabItem item}) {
-    return currentTabIndex == item.index ? TabHelper.color(item) : Colors.grey;
+        appBar: AppBar(
+          title: Text('רעות תקני לי'),
+        ),
+        body: _getBody());
   }
 }
