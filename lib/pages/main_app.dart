@@ -10,6 +10,8 @@ import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
 import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 import 'package:reut_buy_it_for_me/bottom_navigation.dart';
 import '../utils/AppColors.dart';
+import 'package:launch_review/launch_review.dart';
+import 'package:progress_hud/progress_hud.dart';
 
 class MainApp extends StatefulWidget {
   @override
@@ -22,6 +24,7 @@ class AppState extends State<MainApp> {
   InAppWebViewController webView;
   String url = TabHelper.url(TabItem.home);
   double progress = 0;
+  ProgressHUD _progressHUD;
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -31,6 +34,17 @@ class AppState extends State<MainApp> {
     _firebaseCloudMessagingListeners();
     _initConnectionListener();
     _shouldShowWelcome();
+    _initProgressHUD();
+  }
+
+  void _initProgressHUD() {
+    _progressHUD = new ProgressHUD(
+      backgroundColor: Colors.black12,
+      color: Colors.white,
+      containerColor: AppColors.pink,
+      borderRadius: 8.0,
+      text: '...טוען',
+    );
   }
 
   @override
@@ -131,13 +145,11 @@ class AppState extends State<MainApp> {
     final result = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
-      setState(() {
-        // currentTab = TabItem.favorites;
-      });
+      url = TabHelper.url(TabItem.favorites);
+      webView.loadUrl(url);
     } else if (result == "calculator") {
-      setState(() {
-        // currentTab = TabItem.calculator;
-      });
+      url = TabHelper.url(TabItem.calculator);
+      webView.loadUrl(url);
     }
   }
 
@@ -159,74 +171,135 @@ class AppState extends State<MainApp> {
   }
 
   Widget _getBody() {
-    return InAppWebView(
-      initialUrl: url,
-      initialHeaders: {},
-      initialOptions: {},
-      onWebViewCreated: (InAppWebViewController controller) {
-        webView = controller;
-      },
-      onLoadStart: (InAppWebViewController controller, String url) {
-        print("started $url");
-        setState(() {
-          this.url = url;
-        });
-      },
-      onProgressChanged: (InAppWebViewController controller, int progress) {
-        setState(() {
-          this.progress = progress / 100;
-        });
-      },
-    );
+    return new Stack(children: <Widget>[
+      InAppWebView(
+        initialUrl: url,
+        initialHeaders: {},
+        initialOptions: {},
+        onWebViewCreated: (InAppWebViewController controller) {
+          webView = controller;
+        },
+        onLoadStart: (InAppWebViewController controller, String url) {
+          print("started $url");
+          setState(() {
+            this.url = url;
+            _progressHUD.state.show();
+          });
+        },
+        onLoadStop: (InAppWebViewController controller, String url) {
+          setState(() {
+            _progressHUD.state.dismiss();
+          });
+        },
+        onProgressChanged: (InAppWebViewController controller, int progress) {
+          setState(() {
+            this.progress = progress / 100;
+          });
+        },
+      ),
+      _progressHUD
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         endDrawer: Theme(
-          data: Theme.of(context).copyWith(canvasColor: AppColors.cream),
+          data: Theme.of(context)
+              .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
           child: Drawer(
             child: Column(
               children: <Widget>[
                 AppBar(
                   automaticallyImplyLeading: false,
-                  title: Text('Choose'),
+                  title: Text('תפריט'),
                 ),
                 ListTile(
-                  title: Text(TabHelper.description(TabItem.home)),
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      TabHelper.description(TabItem.home),
+                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                    ),
+                  ),
                   onTap: () {
                     url = TabHelper.url(TabItem.home);
                     webView.loadUrl(url);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  title: Text(TabHelper.description(TabItem.favorites)),
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      TabHelper.description(TabItem.favorites),
+                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                    ),
+                  ),
                   onTap: () {
                     url = TabHelper.url(TabItem.favorites);
                     webView.loadUrl(url);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  title: Text(TabHelper.description(TabItem.buyMe)),
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      TabHelper.description(TabItem.buyMe),
+                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                    ),
+                  ),
                   onTap: () {
                     url = TabHelper.url(TabItem.buyMe);
                     webView.loadUrl(url);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  title: Text(TabHelper.description(TabItem.meetUs)),
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      TabHelper.description(TabItem.meetUs),
+                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                    ),
+                  ),
                   onTap: () {
                     url = TabHelper.url(TabItem.meetUs);
                     webView.loadUrl(url);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  title: Text(TabHelper.description(TabItem.calculator)),
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      TabHelper.description(TabItem.calculator),
+                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                    ),
+                  ),
                   onTap: () {
                     url = TabHelper.url(TabItem.calculator);
                     webView.loadUrl(url);
+                    Navigator.pop(context);
                   },
-                )
+                ),
+                ListTile(
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "דרג/י אותנו",
+                      style: TextStyle(fontSize: 18, color: AppColors.pink),
+                    ),
+                  ),
+                  onTap: () {
+                    LaunchReview.launch(
+                        writeReview: false,
+                        androidAppId: "com.reuttomer.reut_buy_it_for_me",
+                        iOSAppId: "1460171905");
+                    Navigator.pop(context);
+                  },
+                ),
               ],
             ),
           ),

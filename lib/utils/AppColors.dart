@@ -28,4 +28,18 @@ import 'package:flutter/material.dart';
       900:Color.fromRGBO(244,244,244, 1),
   }; 
   static const cream = MaterialColor(0xFFF4F4F4, creamColorPalettte);
+
+  static const Map<int, Color> menuTextColorPalettte = {
+      50:Color.fromRGBO(114,115,117, .1),
+      100:Color.fromRGBO(114,115,117, .2),
+      200:Color.fromRGBO(114,115,117, .3),
+      300:Color.fromRGBO(114,115,117, .4),
+      400:Color.fromRGBO(114,115,117, .5),
+      500:Color.fromRGBO(114,115,117, .6),
+      600:Color.fromRGBO(114,115,117, .7),
+      700:Color.fromRGBO(114,115,117, .8),
+      800:Color.fromRGBO(114,115,117, .9),
+      900:Color.fromRGBO(114,115,117, 1),
+  }; 
+  static const menuText = MaterialColor(0xFF727375, menuTextColorPalettte);
 }
