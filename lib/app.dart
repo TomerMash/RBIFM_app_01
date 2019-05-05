@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:reut_buy_it_for_me/bottom_navigation.dart';
-import 'package:reut_buy_it_for_me/tab_navigator.dart';
+// import 'package:reut_buy_it_for_me/tab_navigator.dart';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'push_popup.dart';
+import './notifications/push_popup.dart';
 import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/connectionStatusSingleton.dart';
@@ -191,10 +191,10 @@ class AppState extends State<App> {
   Widget _buildOffstageNavigator(TabItem tabItem) {
     return Offstage(
       offstage: currentTab != tabItem,
-      child: TabNavigator(
-        navigatorKey: navigatorKeys[tabItem],
-        tabItem: tabItem,
-      ),
+      // child: TabNavigator(
+      //   navigatorKey: navigatorKeys[tabItem],
+      //   tabItem: tabItem,
+      // ),
     );
   }
 }

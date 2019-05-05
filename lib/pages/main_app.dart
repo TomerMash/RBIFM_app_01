@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import '../push_popup.dart';
+import '../notifications/push_popup.dart';
 import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/connectionStatusSingleton.dart';
@@ -208,104 +208,127 @@ class AppState extends State<MainApp> {
           data: Theme.of(context)
               .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
           child: Drawer(
-            child: Column(
-              children: <Widget>[
-                AppBar(
-                  automaticallyImplyLeading: false,
-                  title: Text('תפריט'),
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      TabHelper.description(TabItem.home),
-                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 60, 24, 16),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        TabHelper.description(TabItem.home),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors
+                                .menuText, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      url = TabHelper.url(TabItem.home);
+                      webView.loadUrl(url);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    url = TabHelper.url(TabItem.home);
-                    webView.loadUrl(url);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      TabHelper.description(TabItem.favorites),
-                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        TabHelper.description(TabItem.favorites),
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      url = TabHelper.url(TabItem.favorites);
+                      webView.loadUrl(url);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    url = TabHelper.url(TabItem.favorites);
-                    webView.loadUrl(url);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      TabHelper.description(TabItem.buyMe),
-                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        TabHelper.description(TabItem.buyMe),
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      url = TabHelper.url(TabItem.buyMe);
+                      webView.loadUrl(url);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    url = TabHelper.url(TabItem.buyMe);
-                    webView.loadUrl(url);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      TabHelper.description(TabItem.meetUs),
-                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        TabHelper.description(TabItem.meetUs),
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      url = TabHelper.url(TabItem.meetUs);
+                      webView.loadUrl(url);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    url = TabHelper.url(TabItem.meetUs);
-                    webView.loadUrl(url);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      TabHelper.description(TabItem.calculator),
-                      style: TextStyle(fontSize: 18, color: AppColors.menuText),
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        TabHelper.description(TabItem.calculator),
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      url = TabHelper.url(TabItem.calculator);
+                      webView.loadUrl(url);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    url = TabHelper.url(TabItem.calculator);
-                    webView.loadUrl(url);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "דרג/י אותנו",
-                      style: TextStyle(fontSize: 18, color: AppColors.pink),
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "דרג/י אותנו",
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .copyWith(color: AppColors.pink, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      LaunchReview.launch(
+                          writeReview: false,
+                          androidAppId: "com.reuttomer.reut_buy_it_for_me",
+                          iOSAppId: "1460171905");
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    LaunchReview.launch(
-                        writeReview: false,
-                        androidAppId: "com.reuttomer.reut_buy_it_for_me",
-                        iOSAppId: "1460171905");
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
         appBar: AppBar(
           title: Text('רעות תקני לי'),
+          iconTheme: IconThemeData(color: Colors.white),
+          textTheme: TextTheme(
+          title: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+          )
+        ),
         ),
         body: _getBody());
   }

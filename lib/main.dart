@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:reut_buy_it_for_me/app.dart';
 import 'pages/main_app.dart';
 import './utils/AppColors.dart';
 import 'utils/connectionStatusSingleton.dart';
-import 'package:reut_buy_it_for_me/tabs_demo_screen.dart';
+
 void main() {
   ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
   connectionStatus.initialize();
