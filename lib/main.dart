@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'pages/main_app.dart';
 import './utils/AppColors.dart';
 import 'utils/connectionStatusSingleton.dart';
+// import 'package:flutter/services.dart';
 
 void main() {
-  ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
-  connectionStatus.initialize();
+  _customInit();
+  _initUI();
   runApp(new MyApp());
+}
+
+void _initUI() {
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //   systemNavigationBarColor: AppColors.pink, // navigation bar color
+  //   statusBarColor: Colors.white, // status bar color
+  // ));
+}
+
+void _customInit() {
+  ConnectionStatusSingleton connectionStatus =
+      ConnectionStatusSingleton.getInstance();
+  connectionStatus.initialize();
 }
 
 class MyApp extends StatelessWidget {

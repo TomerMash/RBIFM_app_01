@@ -10,7 +10,7 @@ class Page2 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           new Padding(
-            padding: const EdgeInsets.fromLTRB(40, 40, 40, 16),
+            padding: const EdgeInsets.fromLTRB(40, 50, 40, 16),
             child: SizedBox(
               child: Image(
                 image: AssetImage(Assets.popupLogo),

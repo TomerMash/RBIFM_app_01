@@ -141,7 +141,7 @@ class AppState extends State<MainApp> {
     if (value == 1) {
       return;
     }
-    _saveWelcomeShowed();
+    // _saveWelcomeShowed();
     final result = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
@@ -321,7 +321,9 @@ class AppState extends State<MainApp> {
           ),
         ),
         appBar: AppBar(
+          brightness: Brightness.dark,
           title: Text('רעות תקני לי'),
+          centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
           title: TextStyle(

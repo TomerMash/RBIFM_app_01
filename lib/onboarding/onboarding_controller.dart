@@ -42,8 +42,10 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
             top: 0.0,
             left: 0.0,
             right: 0.0,
+            bottom: 16,
             child: new SafeArea(
               child: AppBar(
+                brightness: Brightness.dark,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
                 primary: false,
@@ -97,7 +99,7 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
                         child: new Material(
                           child: FlatButton(
                             child: Text(isDone ? 'סגירה' : 'הבא',
-                              style: Theme.of(context).textTheme.headline.copyWith(color: Colors.white),
+                              style: TextStyle(fontSize: 20.0, color: Colors.white),
                             ),
                             onPressed: isDone ? (){
                               Navigator.pop(context);
