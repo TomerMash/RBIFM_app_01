@@ -141,7 +141,7 @@ class AppState extends State<MainApp> {
     if (value == 1) {
       return;
     }
-    // _saveWelcomeShowed();
+    _saveWelcomeShowed();
     final result = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
     if (result == "favorite") {
@@ -204,7 +204,7 @@ class AppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: Theme(
+        endDrawer: Theme(
           data: Theme.of(context)
               .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
           child: Drawer(

@@ -42,7 +42,6 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
             top: 0.0,
             left: 0.0,
             right: 0.0,
-            bottom: 16,
             child: new SafeArea(
               child: AppBar(
                 brightness: Brightness.dark,
@@ -65,14 +64,14 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
             ),
           ),
           new Positioned(
-            bottom: 10.0,
+            bottom: 35.0,
             left: 0.0,
             right: 0.0,
             child: new SafeArea(
               child: new Column(
                 children: <Widget>[
                   new Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: isDone? new Container() : new DotsIndicator(
                       controller: _controller,
                       itemCount: _pages.length,
