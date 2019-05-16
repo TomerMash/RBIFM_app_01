@@ -33,8 +33,8 @@ class AppState extends State<MainApp> {
     super.initState();
     _firebaseCloudMessagingListeners();
     _initConnectionListener();
-    _shouldShowWelcome();
     _initProgressHUD();
+    _shouldShowWelcome();
   }
 
   void _initProgressHUD() {
@@ -204,7 +204,7 @@ class AppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        endDrawer: Theme(
+        drawer: Theme(
           data: Theme.of(context)
               .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
           child: Drawer(
@@ -218,8 +218,8 @@ class AppState extends State<MainApp> {
                       child: Text(
                         TabHelper.description(TabItem.home),
                         style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors
-                                .menuText, fontWeight: FontWeight.bold),
+                            color: AppColors.menuText,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -233,10 +233,9 @@ class AppState extends State<MainApp> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         TabHelper.description(TabItem.favorites),
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors.menuText,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -250,10 +249,9 @@ class AppState extends State<MainApp> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         TabHelper.description(TabItem.buyMe),
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors.menuText,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -267,10 +265,9 @@ class AppState extends State<MainApp> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         TabHelper.description(TabItem.meetUs),
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors.menuText,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -284,10 +281,9 @@ class AppState extends State<MainApp> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         TabHelper.description(TabItem.calculator),
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(color: AppColors.menuText, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors.menuText,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -301,10 +297,8 @@ class AppState extends State<MainApp> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         "דרג/י אותנו",
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(color: AppColors.pink, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: AppColors.pink, fontWeight: FontWeight.bold),
                       ),
                     ),
                     onTap: () {
@@ -326,11 +320,10 @@ class AppState extends State<MainApp> {
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
-          title: TextStyle(
+              title: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
-          )
-        ),
+          )),
         ),
         body: _getBody());
   }

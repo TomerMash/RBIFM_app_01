@@ -20,7 +20,7 @@ class _OnboardingMainPageState extends State<OnboardingMainPage> {
   Widget build(BuildContext context) {
     bool isDone = page == _pages.length - 1;
     return new Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: new Stack(
         children: <Widget>[
           new Positioned.fill(

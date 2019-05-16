@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 class Page2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      decoration: new BoxDecoration(color: Colors.white),
-      child: Column(
+    return new Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           new Padding(
@@ -33,7 +31,6 @@ class Page2 extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Image.asset(Assets.welcome2BOX3Down)),
         ],
-      ),
-    );
+      );
   }
 }
