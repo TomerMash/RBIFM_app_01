@@ -83,7 +83,7 @@ The API return a list of objects as follows:
 
 ### Menu API
 
-> URL: https://reutbuyitforme.com/wp-json/wcra/v1/side_menu/?secret_key=iPK2yFOSVY9DCkf5F6kQCBOQ2SfMsQcO&version=1.0.0
+> URL: https://reutbuyitforme.com/wp-json/wcra/v1/menu/?secret_key=iPK2yFOSVY9DCkf5F6kQCBOQ2SfMsQcO&versions=1.0.0
 > type: GET
 
 | Params | Value |

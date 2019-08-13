@@ -1,17 +1,24 @@
-import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import '../notifications/push_popup.dart';
-import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../utils/connectionStatusSingleton.dart';
 import 'dart:async';
-import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
-import 'package:reut_buy_it_for_me/bottom_navigation.dart';
-import '../utils/AppColors.dart';
-import 'package:launch_review/launch_review.dart';
 import 'package:progress_hud/progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:reut_buy_it_for_me/bottom_navigation.dart';
+import 'package:reut_buy_it_for_me/models/side_menu_model.dart';
+import 'package:reut_buy_it_for_me/notifications/notification_model.dart';
+import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
+import 'package:reut_buy_it_for_me/pages/calculator_page.dart';
+import 'package:reut_buy_it_for_me/providers/currencies_provider.dart';
+import 'package:reut_buy_it_for_me/providers/side_menu_provider.dart';
+import 'package:reut_buy_it_for_me/widgets/side_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../notifications/push_popup.dart';
+import '../utils/AppColors.dart';
+import '../utils/connectionStatusSingleton.dart';
 
 class MainApp extends StatefulWidget {
   @override
@@ -19,6 +26,11 @@ class MainApp extends StatefulWidget {
 }
 
 class AppState extends State<MainApp> {
+  SideMenuItem _selectedDrawerItem = SideMenuItem(
+      name: 'רעות תקני לי',
+      type: 'url',
+      action: TabHelper.url(TabItem.home),
+      menuOrder: 0);
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
   InAppWebViewController webView;
@@ -35,6 +47,14 @@ class AppState extends State<MainApp> {
     _initConnectionListener();
     _initProgressHUD();
     _shouldShowWelcome();
+    Future.delayed(const Duration(milliseconds: 500), () {
+// Here you can write your code
+
+      setState(() {
+        _fetchMenuData();
+        _fetchCurrenciesData();
+      });
+    });
   }
 
   void _initProgressHUD() {
@@ -134,6 +154,16 @@ class AppState extends State<MainApp> {
     });
   }
 
+  _fetchMenuData() {
+    final data = Provider.of<SideMenuProvider>(context);
+    data.fetchData();
+  }
+
+  _fetchCurrenciesData() {
+    final data = Provider.of<CurrenciesProvider>(context);
+    data.fetchData();
+  }
+
   _shouldShowWelcome() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final key = 'welcome';
@@ -170,10 +200,25 @@ class AppState extends State<MainApp> {
     //     fullscreenDialog: true, builder: (context) => PushPopup(message)));
   }
 
-  Widget _getBody() {
+  _getDrawerItemWidget(SideMenuItem item) {
+    if (item.type.toLowerCase() == 'url') {
+      if (webView != null) {
+        if (item.action != this.url) {
+          webView.loadUrl(item.action);
+          return _getWebviewBody();
+        }
+      }
+    } else if (item.type.toLowerCase() == 'calculator') {
+      return new CalculatorFragment();
+    }
+    // return new Text("Error");
+    return _getWebviewBody();
+  }
+
+  Widget _getWebviewBody() {
     return new Stack(children: <Widget>[
       InAppWebView(
-        initialUrl: url,
+        initialUrl: _selectedDrawerItem.action,
         initialHeaders: {},
         initialOptions: {},
         onWebViewCreated: (InAppWebViewController controller) {
@@ -187,6 +232,7 @@ class AppState extends State<MainApp> {
           });
         },
         onLoadStop: (InAppWebViewController controller, String url) {
+          print("Stopped $url");
           setState(() {
             _progressHUD.state.dismiss();
           });
@@ -201,122 +247,135 @@ class AppState extends State<MainApp> {
     ]);
   }
 
+  void _updatePageFromDrwaer(SideMenuItem item) {
+    setState(() => _selectedDrawerItem = item);
+    Navigator.of(context).pop();
+    // _getDrawerItemWidget(item);
+    // if (item.type.toLowerCase() == 'url') {
+    //   webView.loadUrl(item.action);
+    // } else if (item.type == 'calculator') {
+    //   // Do something
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        endDrawer: Theme(
-          data: Theme.of(context)
-              .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
-          child: Drawer(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 60, 24, 16),
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        TabHelper.description(TabItem.home),
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.menuText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      url = TabHelper.url(TabItem.home);
-                      webView.loadUrl(url);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        TabHelper.description(TabItem.favorites),
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.menuText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      url = TabHelper.url(TabItem.favorites);
-                      webView.loadUrl(url);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        TabHelper.description(TabItem.buyMe),
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.menuText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      url = TabHelper.url(TabItem.buyMe);
-                      webView.loadUrl(url);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        TabHelper.description(TabItem.meetUs),
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.menuText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      url = TabHelper.url(TabItem.meetUs);
-                      webView.loadUrl(url);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        TabHelper.description(TabItem.calculator),
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.menuText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      url = TabHelper.url(TabItem.calculator);
-                      webView.loadUrl(url);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        "דרג/י אותנו",
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            color: AppColors.pink, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onTap: () {
-                      LaunchReview.launch(
-                          writeReview: false,
-                          androidAppId: "com.reuttomer.reut_buy_it_for_me",
-                          iOSAppId: "1460171905");
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        endDrawer: new SideDrawer(_updatePageFromDrwaer),
+        // endDrawer: Theme(
+        //   data: Theme.of(context)
+        //       .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
+        //   child: Drawer(
+        //     child: Padding(
+        //       padding: const EdgeInsets.fromLTRB(16, 60, 24, 16),
+        //       child: Column(
+        //         children: <Widget>[
+
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       TabHelper.description(TabItem.home),
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.menuText,
+        //           //           fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     url = TabHelper.url(TabItem.home);
+        //           //     webView.loadUrl(url);
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       TabHelper.description(TabItem.favorites),
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.menuText,
+        //           //           fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     url = TabHelper.url(TabItem.favorites);
+        //           //     webView.loadUrl(url);
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       TabHelper.description(TabItem.buyMe),
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.menuText,
+        //           //           fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     url = TabHelper.url(TabItem.buyMe);
+        //           //     webView.loadUrl(url);
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       TabHelper.description(TabItem.meetUs),
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.menuText,
+        //           //           fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     url = TabHelper.url(TabItem.meetUs);
+        //           //     webView.loadUrl(url);
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       TabHelper.description(TabItem.calculator),
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.menuText,
+        //           //           fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     url = TabHelper.url(TabItem.calculator);
+        //           //     webView.loadUrl(url);
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //           // ListTile(
+        //           //   title: Align(
+        //           //     alignment: Alignment.centerRight,
+        //           //     child: Text(
+        //           //       "דרג/י אותנו",
+        //           //       style: Theme.of(context).textTheme.title.copyWith(
+        //           //           color: AppColors.pink, fontWeight: FontWeight.bold),
+        //           //     ),
+        //           //   ),
+        //           //   onTap: () {
+        //           //     LaunchReview.launch(
+        //           //         writeReview: false,
+        //           //         androidAppId: "com.reuttomer.reut_buy_it_for_me",
+        //           //         iOSAppId: "1460171905");
+        //           //     Navigator.pop(context);
+        //           //   },
+        //           // ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
         appBar: AppBar(
           brightness: Brightness.dark,
-          title: Text('רעות תקני לי'),
+          title: Text(_selectedDrawerItem.name),
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
@@ -325,6 +384,6 @@ class AppState extends State<MainApp> {
             fontSize: 20.0,
           )),
         ),
-        body: _getBody());
+        body: _getDrawerItemWidget(_selectedDrawerItem));
   }
 }
