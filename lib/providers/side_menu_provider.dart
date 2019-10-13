@@ -5,7 +5,7 @@ import 'package:package_info/package_info.dart';
 import 'package:reut_buy_it_for_me/models/side_menu_model.dart';
 
 class SideMenuProvider with ChangeNotifier {
-  String _dataUrl = "https://reutbuyitforme.com/wp-json/wcra/v1/menu/?secret_key=iPK2yFOSVY9DCkf5F6kQCBOQ2SfMsQcO&versions=";
+  String _dataUrl = "https://reutbuyitforme.com/wp-json/wcra/v1/indexcategory/?secret_key=iPK2yFOSVY9DCkf5F6kQCBOQ2SfMsQcO&version=";
 
   SideMenuProvider();
 
