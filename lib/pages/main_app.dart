@@ -204,21 +204,22 @@ class AppState extends State<MainApp> {
     if (item.type.toLowerCase() == 'url') {
       if (webView != null) {
         if (item.action != this.url) {
+          _selectedDrawerItem = item;
           webView.loadUrl(item.action);
-          return _getWebviewBody();
+          return _getWebviewBody(item.action);
         }
       }
     } else if (item.type.toLowerCase() == 'calculator') {
       return new CalculatorFragment();
     }
     // return new Text("Error");
-    return _getWebviewBody();
+    return _getWebviewBody(_selectedDrawerItem.action);
   }
 
-  Widget _getWebviewBody() {
+  Widget _getWebviewBody(String url) {
     return new Stack(children: <Widget>[
       InAppWebView(
-        initialUrl: _selectedDrawerItem.action,
+        initialUrl: url,
         initialHeaders: {},
         initialOptions: {},
         onWebViewCreated: (InAppWebViewController controller) {
@@ -227,6 +228,7 @@ class AppState extends State<MainApp> {
         onLoadStart: (InAppWebViewController controller, String url) {
           print("started $url");
           setState(() {
+            _selectedDrawerItem = SideMenuItem(action: url, name: _selectedDrawerItem.name, type: _selectedDrawerItem.type); // We get here from a link press inside the webview as well so we should change the selected item here as well
             this.url = url;
             _progressHUD.state.show();
           });
