@@ -178,8 +178,14 @@ class AppState extends State<MainApp> {
       url = TabHelper.url(TabItem.favorites);
       webView.loadUrl(url);
     } else if (result == "calculator") {
-      url = TabHelper.url(TabItem.calculator);
-      webView.loadUrl(url);
+      // url = TabHelper.url(TabItem.calculator);
+      // webView.loadUrl(url);
+      setState(() {
+        _selectedDrawerItem = SideMenuItem(
+              action: "",
+            name: TabHelper.description(TabItem.calculator),
+            type: "calculator");
+      });
     }
   }
 
@@ -228,7 +234,11 @@ class AppState extends State<MainApp> {
         onLoadStart: (InAppWebViewController controller, String url) {
           print("started $url");
           setState(() {
-            _selectedDrawerItem = SideMenuItem(action: url, name: _selectedDrawerItem.name, type: _selectedDrawerItem.type); // We get here from a link press inside the webview as well so we should change the selected item here as well
+            _selectedDrawerItem = SideMenuItem(
+                action: url,
+                name: _selectedDrawerItem.name,
+                type: _selectedDrawerItem
+                    .type); // We get here from a link press inside the webview as well so we should change the selected item here as well
             this.url = url;
             _progressHUD.state.show();
           });
