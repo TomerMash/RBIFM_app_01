@@ -21,28 +21,32 @@ class SideDrawer extends StatelessWidget {
                 .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
             child: Drawer(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 60, 24, 16),
+                padding: const EdgeInsets.fromLTRB(0, 60, 0, 16),
                 child: Column(
                   children: <Widget>[
                     Expanded(
                       child: SizedBox(
                           height: 480.0,
-                          child: new ListView.builder(
+                          child: new ListView.separated(
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      Divider(),
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               itemCount: list.length,
                               itemBuilder: (BuildContext ctxt, int index) {
                                 return ListTile(
+                                  dense: true,
                                   title: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
                                       '${list[index].name}',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .title
+                                          .subtitle
                                           .copyWith(
                                               color: AppColors.menuText,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.normal),
                                     ),
                                   ),
                                   onTap: () {
