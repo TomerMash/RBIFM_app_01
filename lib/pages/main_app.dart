@@ -33,6 +33,7 @@ class AppState extends State<MainApp> {
       menuOrder: 0);
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
+  bool canGoBack = false;
   InAppWebViewController webView;
   String url = TabHelper.url(TabItem.home);
   double progress = 0;
@@ -182,7 +183,7 @@ class AppState extends State<MainApp> {
       // webView.loadUrl(url);
       setState(() {
         _selectedDrawerItem = SideMenuItem(
-              action: "",
+            action: "",
             name: TabHelper.description(TabItem.calculator),
             type: "calculator");
       });
@@ -248,6 +249,11 @@ class AppState extends State<MainApp> {
           setState(() {
             _progressHUD.state.dismiss();
           });
+          webView.canGoBack().then((canGoBack){
+            setState(() {
+                this.canGoBack = canGoBack;
+              });
+          });
         },
         onProgressChanged: (InAppWebViewController controller, int progress) {
           setState(() {
@@ -268,6 +274,24 @@ class AppState extends State<MainApp> {
     // } else if (item.type == 'calculator') {
     //   // Do something
     // }
+  }
+
+  Widget _getFAB() {
+    if (webView == null || _selectedDrawerItem.type != 'url') {
+      return Container();
+    }
+
+    return Visibility(
+        visible: canGoBack,
+              child: FloatingActionButton(
+          onPressed: () {
+            webView.goBack();
+          },
+          child: Icon(Icons.arrow_forward),
+          foregroundColor: Colors.white,
+          backgroundColor: AppColors.pink,
+        ),
+      );
   }
 
   @override
@@ -396,6 +420,7 @@ class AppState extends State<MainApp> {
             fontSize: 20.0,
           )),
         ),
-        body: _getDrawerItemWidget(_selectedDrawerItem));
+        body: _getDrawerItemWidget(_selectedDrawerItem),
+        floatingActionButton: _getFAB());
   }
 }
