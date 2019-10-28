@@ -23,13 +23,13 @@ class Page2 extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Image.asset(Assets.welcome2BOX1Up)),
           new FlatButton(
-              onPressed: () { Navigator.pop(context, "main"); },
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Image.asset(Assets.welcome2BOX2Middle)),
-          new FlatButton(
               onPressed: () { Navigator.pop(context, "calculator"); },
               padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Image.asset(Assets.welcome2BOX3Down)),
+              child: Image.asset(Assets.welcome2BOX2Middle)),
+          // new FlatButton(
+          //     onPressed: () { Navigator.pop(context, "calculator"); },
+          //     padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          //     child: Image.asset(Assets.welcome2BOX3Down)),
         ],
       );
   }
