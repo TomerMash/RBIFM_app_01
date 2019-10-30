@@ -13,8 +13,10 @@ import 'package:reut_buy_it_for_me/onboarding/onboarding_controller.dart';
 import 'package:reut_buy_it_for_me/pages/calculator_page.dart';
 import 'package:reut_buy_it_for_me/providers/currencies_provider.dart';
 import 'package:reut_buy_it_for_me/providers/side_menu_provider.dart';
+import 'package:reut_buy_it_for_me/utils/assets.dart';
 import 'package:reut_buy_it_for_me/widgets/side_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../notifications/push_popup.dart';
 import '../utils/AppColors.dart';
@@ -47,7 +49,7 @@ class AppState extends State<MainApp> {
     _firebaseCloudMessagingListeners();
     _initConnectionListener();
     _initProgressHUD();
-    _shouldShowWelcome();
+    // _shouldShowWelcome();
     Future.delayed(const Duration(milliseconds: 500), () {
 // Here you can write your code
 
@@ -165,30 +167,30 @@ class AppState extends State<MainApp> {
     data.fetchData();
   }
 
-  _shouldShowWelcome() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final key = 'welcome';
-    final value = prefs.getInt(key) ?? 0;
-    if (value == 1) {
-      return;
-    }
-    _saveWelcomeShowed();
-    final result = await Navigator.of(context).push(MaterialPageRoute(
-        fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
-    if (result == "favorite") {
-      url = TabHelper.url(TabItem.favorites);
-      webView.loadUrl(url);
-    } else if (result == "calculator") {
-      // url = TabHelper.url(TabItem.calculator);
-      // webView.loadUrl(url);
-      setState(() {
-        _selectedDrawerItem = SideMenuItem(
-            action: "",
-            name: TabHelper.description(TabItem.calculator),
-            type: "calculator");
-      });
-    }
-  }
+  // _shouldShowWelcome() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final key = 'welcome';
+  //   final value = prefs.getInt(key) ?? 0;
+  //   if (value == 1) {
+  //     return;
+  //   }
+  //   _saveWelcomeShowed();
+  //   final result = await Navigator.of(context).push(MaterialPageRoute(
+  //       fullscreenDialog: true, builder: (context) => OnboardingMainPage()));
+  //   if (result == "favorite") {
+  //     url = TabHelper.url(TabItem.favorites);
+  //     webView.loadUrl(url);
+  //   } else if (result == "calculator") {
+  //     // url = TabHelper.url(TabItem.calculator);
+  //     // webView.loadUrl(url);
+  //     setState(() {
+  //       _selectedDrawerItem = SideMenuItem(
+  //           action: "",
+  //           name: TabHelper.description(TabItem.calculator),
+  //           type: "calculator");
+  //     });
+  //   }
+  // }
 
   _saveWelcomeShowed() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -249,10 +251,10 @@ class AppState extends State<MainApp> {
           setState(() {
             _progressHUD.state.dismiss();
           });
-          webView.canGoBack().then((canGoBack){
+          webView.canGoBack().then((canGoBack) {
             setState(() {
-                this.canGoBack = canGoBack;
-              });
+              this.canGoBack = canGoBack;
+            });
           });
         },
         onProgressChanged: (InAppWebViewController controller, int progress) {
@@ -282,22 +284,30 @@ class AppState extends State<MainApp> {
     }
 
     return Visibility(
-        visible: canGoBack,
-              child: FloatingActionButton(
-          onPressed: () {
-            webView.goBack();
-          },
-          child: Icon(Icons.arrow_forward),
-          foregroundColor: Colors.white,
-          backgroundColor: AppColors.pink,
-        ),
-      );
+      visible: canGoBack,
+      child: FloatingActionButton(
+        onPressed: () {
+          webView.goBack();
+        },
+        child: Icon(Icons.arrow_forward),
+        foregroundColor: Colors.white,
+        backgroundColor: AppColors.pink,
+      ),
+    );
+  }
+
+  _launchURL() async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        endDrawer: new SideDrawer(_updatePageFromDrwaer),
+        // endDrawer: new SideDrawer(_updatePageFromDrwaer),
         // endDrawer: Theme(
         //   data: Theme.of(context)
         //       .copyWith(canvasColor: Color.fromRGBO(244, 244, 244, 1)),
@@ -410,6 +420,40 @@ class AppState extends State<MainApp> {
         //   ),
         // ),
         appBar: AppBar(
+          actions: <Widget>[
+            // action button
+            IconButton(
+              icon: new ImageIcon(AssetImage(Assets.iconBrowser),
+                  color: Colors.white),
+              onPressed: _launchURL,
+            ),
+            // action button
+            IconButton(
+              icon: new ImageIcon(AssetImage(Assets.iconCurrency),
+                  color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider<CurrenciesProvider>(
+                            builder: (_) => CurrenciesProvider())
+                      ],
+                      child: CalculatorFragment(),
+                    ),
+                    settings: RouteSettings(name: 'CalculatorFragment'),
+                  ),
+                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => CalculatorFragment(),
+                //   ),
+                // );
+              },
+            ),
+          ],
           brightness: Brightness.dark,
           title: Text(_selectedDrawerItem.name),
           centerTitle: true,

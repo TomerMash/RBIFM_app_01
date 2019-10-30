@@ -10,4 +10,6 @@ class Assets {
   static final String welcome2BOX1Up = 'assets/welcome2_BOX1_up.png';
   static final String welcome2BOX2Middle = 'assets/welcome2_BOX2_middle.png';
   static final String welcome2BOX3Down = 'assets/welcome2_BOX3_down.png';
+  static final String iconBrowser = 'assets/icon_browser.png';
+  static final String iconCurrency = 'assets/icon_currency.png';
 }
