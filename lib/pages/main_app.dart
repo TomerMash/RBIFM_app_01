@@ -455,6 +455,15 @@ class AppState extends State<MainApp> {
               },
             ),
           ],
+          automaticallyImplyLeading: true,
+          //`true` if you want Flutter to automatically add Back Button when needed,
+          //or `false` if you want to force your own back button every where
+          leading: !this.canGoBack
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => webView.goBack(),
+                ),
           brightness: Brightness.dark,
           title: Text(_selectedDrawerItem.name),
           centerTitle: true,
@@ -465,7 +474,7 @@ class AppState extends State<MainApp> {
             fontSize: 20.0,
           )),
         ),
-        body: _getDrawerItemWidget(_selectedDrawerItem),
-        floatingActionButton: _getFAB());
+        body: _getDrawerItemWidget(_selectedDrawerItem));
+        // floatingActionButton: _getFAB());
   }
 }
