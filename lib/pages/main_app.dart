@@ -297,10 +297,11 @@ class AppState extends State<MainApp> {
   }
 
   _launchURL() async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    const u = 'https://reutbuyitforme.com/';
+    if (await canLaunch(u)) {
+      await launch(u);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $u';
     }
   }
 
