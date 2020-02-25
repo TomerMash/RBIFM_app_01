@@ -263,7 +263,8 @@ class AppState extends State<MainApp> {
           });
         },
       ),
-      _progressHUD
+      _progressHUD,
+      _getback()
     ]);
   }
 
@@ -290,6 +291,20 @@ class AppState extends State<MainApp> {
           webView.goBack();
         },
         child: Icon(Icons.arrow_forward),
+        foregroundColor: Colors.white,
+        backgroundColor: AppColors.pink,
+      ),
+    );
+  }
+
+  Widget _getback() {
+    return Visibility(
+      visible: canGoBack,
+      child: FloatingActionButton(
+        onPressed: () {
+          webView.goBack();
+        },
+        child: Icon(Icons.arrow_back),
         foregroundColor: Colors.white,
         backgroundColor: AppColors.pink,
       ),
@@ -463,6 +478,8 @@ class AppState extends State<MainApp> {
               : IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () => webView.goBack(),
+                  alignment: Alignment.center,
+                  padding: new EdgeInsets.all(0.0),
                 ),
           brightness: Brightness.dark,
           title: Text(_selectedDrawerItem.name),
@@ -475,6 +492,6 @@ class AppState extends State<MainApp> {
           )),
         ),
         body: _getDrawerItemWidget(_selectedDrawerItem));
-        // floatingActionButton: _getFAB());
+    // floatingActionButton: _getFAB());
   }
 }
