@@ -33,6 +33,7 @@ class AppState extends State<MainApp> {
       type: 'url',
       action: TabHelper.url(TabItem.home),
       menuOrder: 0);
+
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
   bool canGoBack = false;
@@ -257,14 +258,17 @@ class AppState extends State<MainApp> {
             });
           });
         },
-        onProgressChanged: (InAppWebViewController controller, int progress) {
-          setState(() {
-            this.progress = progress / 100;
-          });
-        },
+        // onProgressChanged: (InAppWebViewController controller, int progress) {
+        //   setState(() {
+        //     this.progress = progress / 100;
+        //   });
+        // },
       ),
       _progressHUD,
-      _getback()
+      Align(
+        alignment: Alignment(0.8, 0.9),
+        child: _getback(),
+      )
     ]);
   }
 
@@ -279,36 +283,38 @@ class AppState extends State<MainApp> {
     // }
   }
 
-  Widget _getFAB() {
-    if (webView == null || _selectedDrawerItem.type != 'url') {
-      return Container();
-    }
+  // Widget _getFAB() {
+  //   if (webView == null || _selectedDrawerItem.type != 'url') {
+  //     return Container();
+  //   }
 
-    return Visibility(
-      visible: canGoBack,
-      child: FloatingActionButton(
-        onPressed: () {
-          webView.goBack();
-        },
-        child: Icon(Icons.arrow_forward),
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.pink,
-      ),
-    );
-  }
+  //   return Visibility(
+  //     visible: canGoBack,
+  //     child: FloatingActionButton(
+  //       onPressed: () {
+  //         webView.goBack();
+  //       },
+  //       child: Icon(Icons.arrow_forward),
+  //       foregroundColor: Colors.white,
+  //       backgroundColor: AppColors.pink,
+  //     ),
+  //   );
+  // }
 
   Widget _getback() {
     return Visibility(
-      visible: canGoBack,
-      child: FloatingActionButton(
-        onPressed: () {
-          webView.goBack();
-        },
-        child: Icon(Icons.arrow_back),
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.pink,
-      ),
-    );
+        visible: canGoBack,
+        child: Container(
+            width: 38.0,
+            height: 38.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                webView.goBack();
+              },
+              child: Icon(Icons.arrow_back),
+              foregroundColor: Colors.white,
+              backgroundColor: AppColors.pink,
+            )));
   }
 
   _launchURL() async {
@@ -437,6 +443,14 @@ class AppState extends State<MainApp> {
         // ),
         appBar: AppBar(
           actions: <Widget>[
+            FlatButton(
+              textColor: Colors.white,
+              onPressed: () {
+                _getDrawerItemWidget(_selectedDrawerItem);
+              },
+              child: Text(_selectedDrawerItem.name),
+              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+            ),
             // action button
             IconButton(
               icon: new ImageIcon(AssetImage(Assets.iconBrowser),
@@ -461,37 +475,23 @@ class AppState extends State<MainApp> {
                     settings: RouteSettings(name: 'CalculatorFragment'),
                   ),
                 );
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => CalculatorFragment(),
-                //   ),
-                // );
               },
             ),
           ],
           automaticallyImplyLeading: true,
           //`true` if you want Flutter to automatically add Back Button when needed,
           //or `false` if you want to force your own back button every where
-          leading: !this.canGoBack
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => webView.goBack(),
-                  alignment: Alignment.center,
-                  padding: new EdgeInsets.all(0.0),
-                ),
+          leading: !this.canGoBack ? null : null,
           brightness: Brightness.dark,
-          title: Text(_selectedDrawerItem.name),
-          centerTitle: true,
+          // title: Text(_selectedDrawerItem.name),
+          // centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
-          textTheme: TextTheme(
-              title: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-          )),
+          // textTheme: TextTheme(
+          //     title: TextStyle(
+          //   color: Colors.white,
+          //   fontSize: 20.0,
+          // )),
         ),
         body: _getDrawerItemWidget(_selectedDrawerItem));
-    // floatingActionButton: _getFAB());
   }
 }

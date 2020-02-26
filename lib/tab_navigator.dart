@@ -8,6 +8,7 @@ class TabNavigatorRoutes {
 }
 
 class TabNavigator extends StatelessWidget {
+
   TabNavigator({this.navigatorKey, this.tabItem});
   final GlobalKey<NavigatorState> navigatorKey;
   final TabItem tabItem;
