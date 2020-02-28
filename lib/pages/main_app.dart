@@ -30,6 +30,7 @@ class MainApp extends StatefulWidget {
 class AppState extends State<MainApp> {
   bool canGoBack = false;
   bool appbartitleclick = false;
+  double flatbtnwidth, flatbtnheight, marginbottom;
 
   SideMenuItem _selectedDrawerItem = SideMenuItem(
       name: 'רעות תקני לי',
@@ -277,8 +278,9 @@ class AppState extends State<MainApp> {
         // },
       ),
       _progressHUD,
+
       Align(
-        alignment: Alignment(0.8, 0.88),
+        alignment: Alignment(0.8, 1),
         child: _getback(),
       )
     ]);
@@ -296,11 +298,15 @@ class AppState extends State<MainApp> {
   }
 
   Widget _getback() {
+    print('width: $flatbtnwidth');
+    print('height: $flatbtnheight');
+
     return Visibility(
         visible: canGoBack,
         child: Container(
-            width: 31.5,
-            height: 31.9,
+            margin: EdgeInsets.only(bottom: marginbottom),
+            width: flatbtnwidth,
+            height: flatbtnheight,
             child: FloatingActionButton(
               onPressed: () {
                 webView.goBack();
@@ -323,6 +329,16 @@ class AppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width > 767) {
+      flatbtnwidth = 40;
+      flatbtnheight = 40;
+      marginbottom = 60;
+    } else {
+      flatbtnwidth = 30;
+      flatbtnheight = 30;
+      marginbottom = 45;
+    }
+
     return Scaffold(
         // endDrawer: new SideDrawer(_updatePageFromDrwaer),
         // endDrawer: Theme(
