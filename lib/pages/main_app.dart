@@ -28,6 +28,9 @@ class MainApp extends StatefulWidget {
 }
 
 class AppState extends State<MainApp> {
+  bool canGoBack = false;
+  bool appbartitleclick = false;
+
   SideMenuItem _selectedDrawerItem = SideMenuItem(
       name: 'רעות תקני לי',
       type: 'url',
@@ -36,7 +39,6 @@ class AppState extends State<MainApp> {
 
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
-  bool canGoBack = false;
   InAppWebViewController webView;
   String url = TabHelper.url(TabItem.home);
   double progress = 0;
@@ -227,6 +229,7 @@ class AppState extends State<MainApp> {
   }
 
   Widget _getWebviewBody(String url) {
+    print(url);
     return new Stack(children: <Widget>[
       InAppWebView(
         initialUrl: url,
@@ -249,13 +252,22 @@ class AppState extends State<MainApp> {
         },
         onLoadStop: (InAppWebViewController controller, String url) {
           print("Stopped $url");
+          print(canGoBack);
           setState(() {
             _progressHUD.state.dismiss();
           });
           webView.canGoBack().then((canGoBack) {
-            setState(() {
-              this.canGoBack = canGoBack;
-            });
+            print("INWEBVIEW $canGoBack");
+            if (this.appbartitleclick == true) {
+              appbartitleclick = false;
+              setState(() {
+                this.canGoBack = false;
+              });
+            } else {
+              setState(() {
+                this.canGoBack = canGoBack;
+              });
+            }
           });
         },
         // onProgressChanged: (InAppWebViewController controller, int progress) {
@@ -266,7 +278,7 @@ class AppState extends State<MainApp> {
       ),
       _progressHUD,
       Align(
-        alignment: Alignment(0.8, 0.9),
+        alignment: Alignment(0.8, 0.88),
         child: _getback(),
       )
     ]);
@@ -283,34 +295,17 @@ class AppState extends State<MainApp> {
     // }
   }
 
-  // Widget _getFAB() {
-  //   if (webView == null || _selectedDrawerItem.type != 'url') {
-  //     return Container();
-  //   }
-
-  //   return Visibility(
-  //     visible: canGoBack,
-  //     child: FloatingActionButton(
-  //       onPressed: () {
-  //         webView.goBack();
-  //       },
-  //       child: Icon(Icons.arrow_forward),
-  //       foregroundColor: Colors.white,
-  //       backgroundColor: AppColors.pink,
-  //     ),
-  //   );
-  // }
-
   Widget _getback() {
     return Visibility(
         visible: canGoBack,
         child: Container(
-            width: 38.0,
-            height: 38.0,
+            width: 31.5,
+            height: 31.9,
             child: FloatingActionButton(
               onPressed: () {
                 webView.goBack();
               },
+              elevation: 0.0,
               child: Icon(Icons.arrow_back),
               foregroundColor: Colors.white,
               backgroundColor: AppColors.pink,
@@ -442,16 +437,19 @@ class AppState extends State<MainApp> {
         //   ),
         // ),
         appBar: AppBar(
+          centerTitle: true,
+          title: FlatButton(
+            onPressed: () {
+              appbartitleclick = true;
+              setState(() {
+                webView.loadUrl("https://reutbuyitforme.com/app-product/");
+              });
+            },
+            child: Text(_selectedDrawerItem.name,
+                style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+            // shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+          ),
           actions: <Widget>[
-            FlatButton(
-              textColor: Colors.white,
-              onPressed: () {
-                _getDrawerItemWidget(_selectedDrawerItem);
-              },
-              child: Text(_selectedDrawerItem.name),
-              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-            ),
-            // action button
             IconButton(
               icon: new ImageIcon(AssetImage(Assets.iconBrowser),
                   color: Colors.white),

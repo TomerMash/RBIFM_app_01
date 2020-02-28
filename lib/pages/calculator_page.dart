@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reut_buy_it_for_me/app.dart';
+import 'package:reut_buy_it_for_me/main.dart';
 import 'package:reut_buy_it_for_me/models/currencies_model.dart';
 import 'package:reut_buy_it_for_me/providers/currencies_provider.dart';
 import 'package:reut_buy_it_for_me/utils/AppColors.dart';
@@ -13,18 +15,30 @@ class CalculatorFragment extends StatelessWidget {
       data.fetchData();
     }
     return Scaffold(
-      appBar: AppBar(brightness: Brightness.dark,
-          title: Text("מחשבון"),
-          centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
-          textTheme: TextTheme(
-              title: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-          )),
+      appBar: AppBar(
+        brightness: Brightness.dark,
+        centerTitle: true,
+        title: FlatButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyApp(),
+                ));
+          },
+          child: Text("מחשבון",
+              style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+          shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
         ),
-          body: data.isFetching
-          ? new  Container(
+        iconTheme: IconThemeData(color: Colors.white),
+        textTheme: TextTheme(
+            title: TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+        )),
+      ),
+      body: data.isFetching
+          ? new Container(
               child: Center(
                 child: CircularProgressIndicator(),
               ),
