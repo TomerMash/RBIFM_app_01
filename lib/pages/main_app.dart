@@ -28,14 +28,18 @@ class MainApp extends StatefulWidget {
 }
 
 class AppState extends State<MainApp> {
+  bool canGoBack = false;
+  bool appbartitleclick = false;
+  double flatbtnwidth, flatbtnheight, marginbottom;
+
   SideMenuItem _selectedDrawerItem = SideMenuItem(
       name: 'רעות תקני לי',
       type: 'url',
       action: TabHelper.url(TabItem.home),
       menuOrder: 0);
+
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
-  bool canGoBack = false;
   InAppWebViewController webView;
   String url = TabHelper.url(TabItem.home);
   double progress = 0;
@@ -226,6 +230,7 @@ class AppState extends State<MainApp> {
   }
 
   Widget _getWebviewBody(String url) {
+    print(url);
     return new Stack(children: <Widget>[
       InAppWebView(
         initialUrl: url,
@@ -248,23 +253,36 @@ class AppState extends State<MainApp> {
         },
         onLoadStop: (InAppWebViewController controller, String url) {
           print("Stopped $url");
+          print(canGoBack);
           setState(() {
             _progressHUD.state.dismiss();
           });
           webView.canGoBack().then((canGoBack) {
-            setState(() {
-              this.canGoBack = canGoBack;
-            });
+            print("INWEBVIEW $canGoBack");
+            if (this.appbartitleclick == true) {
+              appbartitleclick = false;
+              setState(() {
+                this.canGoBack = false;
+              });
+            } else {
+              setState(() {
+                this.canGoBack = canGoBack;
+              });
+            }
           });
         },
-        onProgressChanged: (InAppWebViewController controller, int progress) {
-          setState(() {
-            this.progress = progress / 100;
-          });
-        },
+        // onProgressChanged: (InAppWebViewController controller, int progress) {
+        //   setState(() {
+        //     this.progress = progress / 100;
+        //   });
+        // },
       ),
       _progressHUD,
-      _getback()
+
+      Align(
+        alignment: Alignment(0.8, 1),
+        child: _getback(),
+      )
     ]);
   }
 
@@ -279,36 +297,25 @@ class AppState extends State<MainApp> {
     // }
   }
 
-  Widget _getFAB() {
-    if (webView == null || _selectedDrawerItem.type != 'url') {
-      return Container();
-    }
-
-    return Visibility(
-      visible: canGoBack,
-      child: FloatingActionButton(
-        onPressed: () {
-          webView.goBack();
-        },
-        child: Icon(Icons.arrow_forward),
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.pink,
-      ),
-    );
-  }
-
   Widget _getback() {
+    print('width: $flatbtnwidth');
+    print('height: $flatbtnheight');
+
     return Visibility(
-      visible: canGoBack,
-      child: FloatingActionButton(
-        onPressed: () {
-          webView.goBack();
-        },
-        child: Icon(Icons.arrow_back),
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.pink,
-      ),
-    );
+        visible: canGoBack,
+        child: Container(
+            margin: EdgeInsets.only(bottom: marginbottom),
+            width: flatbtnwidth,
+            height: flatbtnheight,
+            child: FloatingActionButton(
+              onPressed: () {
+                webView.goBack();
+              },
+              elevation: 0.0,
+              child: Icon(Icons.arrow_back),
+              foregroundColor: Colors.white,
+              backgroundColor: AppColors.pink,
+            )));
   }
 
   _launchURL() async {
@@ -322,6 +329,16 @@ class AppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width > 767) {
+      flatbtnwidth = 40;
+      flatbtnheight = 40;
+      marginbottom = 60;
+    } else {
+      flatbtnwidth = 30;
+      flatbtnheight = 30;
+      marginbottom = 45;
+    }
+
     return Scaffold(
         // endDrawer: new SideDrawer(_updatePageFromDrwaer),
         // endDrawer: Theme(
@@ -436,8 +453,19 @@ class AppState extends State<MainApp> {
         //   ),
         // ),
         appBar: AppBar(
+          centerTitle: true,
+          title: FlatButton(
+            onPressed: () {
+              appbartitleclick = true;
+              setState(() {
+                webView.loadUrl("https://reutbuyitforme.com/app-product/");
+              });
+            },
+            child: Text(_selectedDrawerItem.name,
+                style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+            // shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+          ),
           actions: <Widget>[
-            // action button
             IconButton(
               icon: new ImageIcon(AssetImage(Assets.iconBrowser),
                   color: Colors.white),
@@ -461,37 +489,23 @@ class AppState extends State<MainApp> {
                     settings: RouteSettings(name: 'CalculatorFragment'),
                   ),
                 );
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => CalculatorFragment(),
-                //   ),
-                // );
               },
             ),
           ],
           automaticallyImplyLeading: true,
           //`true` if you want Flutter to automatically add Back Button when needed,
           //or `false` if you want to force your own back button every where
-          leading: !this.canGoBack
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => webView.goBack(),
-                  alignment: Alignment.center,
-                  padding: new EdgeInsets.all(0.0),
-                ),
+          leading: !this.canGoBack ? null : null,
           brightness: Brightness.dark,
-          title: Text(_selectedDrawerItem.name),
-          centerTitle: true,
+          // title: Text(_selectedDrawerItem.name),
+          // centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
-          textTheme: TextTheme(
-              title: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-          )),
+          // textTheme: TextTheme(
+          //     title: TextStyle(
+          //   color: Colors.white,
+          //   fontSize: 20.0,
+          // )),
         ),
         body: _getDrawerItemWidget(_selectedDrawerItem));
-    // floatingActionButton: _getFAB());
   }
 }
